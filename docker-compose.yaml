@@ -9,3 +9,19 @@ services:
       - 8000:8000 # 호스트 머신의 8000번 포트를 docker의 8000번 포트에 연결
     environment:
       - WATCHFILES_FORCE_POLLING=true # 환경에 따라 핫 리로드를 위해 필요
+  db:
+    image: mysql:8.0
+    platform: linux/x86_64
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes' # root 계정을 비밀번호 없이 생성
+      MYSQL_DATABASE: 'demo' # demo 데이터베이스를 초기 데이터베이스로 설정
+      TZ: 'Asia/Seoul'
+    volumes:
+      - type: volume
+        source: mysql_data
+        target: /var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password # MySQL8.0에서는 기본값이 "caching_sha2_password"이라 드라이버가 비지원이므로 변경
+    ports:
+      - 33306:3306 # 호스트 머신의 33306번 포트를 docker의 3306 포트에 연결
+volumes:
+  mysql_data:
