@@ -1,4 +1,6 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.engine import Result
 
 import api.models.task as task_model
 import api.schemas.task as task_schema
@@ -10,3 +12,15 @@ def create_task(db: Session, task_create: task_schema.TaskCreate) -> task_model.
     db.commit()  # db commit
     db.refresh(task)  # Update task (Task instance)
     return task
+
+
+def get_tasks_with_done(db: Session) -> list[tuple[int, str, bool]]:
+    result: Result = db.execute(
+        select(
+            task_model.Task.id,
+            task_model.Task.title,
+            task_model.Done.id.isnot(None).label("done"),  # Done.id가 존재하면 done=True, 존재하지 않으면 done=False
+        ).outerjoin(task_model.Done)
+    )
+
+    return result.all()
