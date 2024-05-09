@@ -13,7 +13,7 @@ class TaskCreateResponse(TaskCreate):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         
 
 class Task(TaskBase):
@@ -21,4 +21,4 @@ class Task(TaskBase):
     done: bool = Field(False, description="완료 플래그")
 
     class Config:
-        orm_mode = True
+        from_attributes = True
